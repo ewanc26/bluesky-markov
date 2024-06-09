@@ -1,5 +1,4 @@
 import os
-import time
 from datetime import datetime
 import dotenv
 from bsky_api import login, DID_resolve
@@ -31,7 +30,7 @@ def generate_and_post_example():
     try:
         response = destination_client.send_post(
             text=generated_text,
-            visibility="public"
+            langs=['en']
         )
         post_link = response['uri']
         print(f"Posted to destination Bluesky account successfully: {post_link}")

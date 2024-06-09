@@ -1,13 +1,17 @@
 from markovchain.text import MarkovText
+from clean import clean_content
 
 def retrieve_posts(client, client_did):
     post_list = []
     has_more = True
-    page = 0
+    cursor = None  # Initialize cursor for pagination
 
     while has_more:
         try:
-            posts = client.app.bsky.feed.post.list(client_did, limit=100, page=page)
+            if cursor:
+                posts = client.app.bsky.feed.post.list(client_did, limit=100, cursor=cursor)
+            else:
+                posts = client.app.bsky.feed.post.list(client_did, limit=100)
         except Exception as e:
             print(f"Error fetching posts: {e}")
             break
@@ -19,11 +23,9 @@ def retrieve_posts(client, client_did):
         for post in posts.records.items():
             post_list.append(post)
 
-        # Update page for the next iteration
-        page += 1
-
-        # Check if there are more pages
-        has_more = posts.pagination.has_more
+        # Check if the response has a cursor for pagination
+        cursor = getattr(posts, 'next_cursor', None)
+        has_more = bool(cursor)  # Continue if there is a next_cursor
 
     return post_list
 
@@ -54,4 +56,10 @@ def refresh_dataset(markov, source_posts):
 
 def get_account_posts(client, client_did):
     posts = retrieve_posts(client, client_did)
-    return [clean_content(post['content']) for post in posts]
+    
+    # Debugging: Print structure of the first post
+    if posts:
+        print("First post structure:", posts[0])
+    
+    # Adjusted list comprehension to handle tuples and access text field from Record instance
+    return [clean_content(post[1].text) for post in posts if hasattr(post[1], 'text')]
