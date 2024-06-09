@@ -1,5 +1,6 @@
 import random
 from datetime import datetime, timedelta
+import time
 
 def calculate_refresh_interval():
     # Calculate a random refresh interval between 30 minutes to 3 hours
