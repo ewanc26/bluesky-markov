@@ -4,130 +4,100 @@
 
 This repository contains a set of scripts to create and post Markov chain-generated content to a Bluesky account using data retrieved from another Bluesky account.
 
-## Files
+## Table of Contents
 
-### `bsky_api.py`
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Logging](#logging)
+- [File Structure](#file-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-Provides functions to log in to a Bluesky account and resolve DID (Decentralized Identifier).
+## Features
 
-- **Functions:**
-  - `login(handle_env_var, app_pass_env_var)`: Logs in to a Bluesky account using environment variables for handle and app password.
-  - `DID_resolve(handle)`: Resolves and retrieves the DID document for a given handle.
+- Fetches posts from a specified source account.
+- Cleans and processes the retrieved content to ensure quality.
+- Utilises Markov chain text generation to create new posts.
+- Automatically posts generated content to a designated destination account.
+- Logs all significant events and errors for debugging purposes.
 
-### `clean.py`
+## Requirements
 
-Contains a function to clean HTML content from posts.
+To run this project, you will need the following:
 
-- **Functions:**
-  - `clean_content(content)`: Removes HTML tags, HTML entities, usernames, special characters, and colon-enclosed words from content.
-
-### `markov_gen.py`
-
-Includes functions to retrieve posts, generate Markov chain text, and refresh the Markov dataset.
-
-- **Functions:**
-  - `retrieve_posts(client, client_did)`: Retrieves posts from a Bluesky account.
-  - `generate(markov, char_limit)`: Generates text using the Markov model within a character limit.
-  - `refresh_dataset(markov, source_posts)`: Refreshes the Markov dataset with new posts.
-  - `get_account_posts(client, client_did)`: Gets and cleans posts from a Bluesky account.
-
-### `time_utils.py`
-
-Provides utility functions for time calculations and sleep management.
-
-- **Functions:**
-  - `calculate_refresh_interval()`: Calculates a random refresh interval between 30 minutes to 3 hours.
-  - `calculate_next_refresh(current_time, refresh_interval)`: Calculates the next refresh time.
-  - `format_time_remaining(time_remaining)`: Formats the time remaining until the next refresh.
-  - `sleep_until_next_refresh(next_refresh)`: Sleeps until the next refresh time.
-
-### `main.py`
-
-The main script to run the bot. It sets up environment variables, logs in to accounts, retrieves and processes posts, and generates and posts new content.
-
-- **Workflow:**
-  1. Load environment variables.
-  2. Log in to source and destination Bluesky accounts.
-  3. Retrieve and clean posts from the source account.
-  4. Generate new content using the Markov model.
-  5. Post generated content to the destination account.
-  6. Repeat the process at calculated intervals.
-
-### `requirements.txt`
-
-Lists the Python dependencies required to run the scripts.
-
-- **Dependencies:**
-  - `atproto`
+- Python 3.x
+- Required libraries (install via `pip`):
   - `dotenv`
   - `markovchain`
+  - `atproto`
 
-### `example.env.txt`
+You can install the required libraries using:
+```bash
+pip install python-dotenv markovchain atproto
+```
 
-Example environment variables file. Copy this to `.env` and fill in your credentials.
+## Installation
 
-- **Environment Variables:**
-  - `SOURCE_HANDLE`: The handle of the source Bluesky account.
-  - `SRC_APP_PASS`: The app password for the source Bluesky account.
-  - `DST_APP_PASS`: The app password for the destination Bluesky account.
-  - `DESTINATION_HANDLE`: The handle of the destination Bluesky account.
-  - `CHAR_LIMIT`: The character limit for generated posts.
-
-## Setup and Usage
-
-1. **Clone the repository:**
-
-   ```sh
+1. Clone the repository:
+   ```bash
    git clone https://github.com/ewanc26/bluesky-markov.git
    cd bluesky-markov
    ```
 
-2. **Install the dependencies:**
-
-   ```sh
-   pip3 install -r requirements.txt
+2. Create a `.env` file in the root directory of the project and add your environment variables:
+   ```plaintext
+   SOURCE_HANDLE=your_source_handle
+   DESTINATION_HANDLE=your_destination_handle
+   CHAR_LIMIT=280
+   SRC_APP_PASS=your_source_app_password
+   DST_APP_PASS=your_destination_app_password
    ```
 
-3. **Set up environment variables:**
+## Usage
 
-   - Copy `example.env.txt` to `.env`:
-
-     ```sh
-     cp example.env.txt .env
-     ```
-
-   - Edit `.env` and fill in your Bluesky handles and app passwords.
-
-4. **Run the bot:**
-
-   ```sh
-   python3 -u 'src/main.py'
+1. Navigate to the project directory.
+2. Run the main script:
+   ```bash
+   python src/main.py
    ```
 
-## Notes
+The application will log into the source and destination accounts, retrieve posts, generate new content based on the retrieved posts, and post the generated content to the destination account at random intervals.
 
-- Ensure that you have valid Bluesky handles and app passwords set in the `.env` file.
-- The bot continuously runs and generates new posts at intervals between 30 minutes and 3 hours.
-- Press `Ctrl+C` to stop the bot.
+## Logging
 
-## Project Structure
+All logs are stored in the `log` directory. The logs are written to `general.log`, where you can find details about the application's execution, including:
 
-```plaintext
-bluesky-markov/
+- Successful logins
+- Retrieved posts
+- Generated content
+- Errors and exceptions
+
+## File Structure
+
+The project has the following structure:
+
+```
+project-root/
+│
+├── log/
+│   └── general.log           # Log file for application events
 │
 ├── src/
-│   ├── .env                    # Environment configuration file
-│   ├── bsky_api.py             # Module for Bluesky API interactions
-│   ├── clean.py                # Module for cleaning content
-│   ├── markov_gen.py           # Module for Markov chain text generation
-│   ├── main.py                 # Main script for the bot
-│   ├── time_utils.py           # Module for time-related utilities
-│   ├── example.env.txt         # Example environment configuration file
+│   ├── clean.py              # Contains functions to clean retrieved content
+│   ├── markov_gen.py         # Handles Markov chain text generation
+│   ├── time_utils.py         # Utilities for time management and scheduling
+│   ├── bsky_api.py           # Functions for interacting with the Bluesky API
+│   └── main.py               # Main application logic
 │
-├── requirements.txt            # Python dependencies
-├── LICENSE                     # Licensing file
-└── README.md                   # Project README file
+├── .env                       # Environment variables for authentication
+└── README.md                  # Project documentation
 ```
+
+## Contributing
+
+Contributions are welcome! If you have suggestions for improvements or find bugs, feel free to open an issue or submit a pull request.
 
 ## License
 
