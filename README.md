@@ -4,7 +4,7 @@
 
 This repository contains a set of scripts to create and post Markov chain-generated content to a Bluesky account using data retrieved from another Bluesky account.
 
-***This repository is available on [GitHub](https://github.com/ewanc26/bluesky-markov) and [Tangled](https://tangled.sh/@ewancroft.uk/bluesky-markov). GitHub is the primary version, and the Tangled version is a mirror.***
+***This repository is available on [GitHub](https://github.com/ewanc26/bluesky-markov) and [Tangled](https://tangled.sh/did:plc:ofrbh253gwicbkc5nktqepol/bluesky-markov). GitHub is the primary version, and the Tangled version is a mirror.***
 
 ## Table of Contents
 
