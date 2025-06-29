@@ -1,6 +1,5 @@
 from atproto import IdResolver, Client
 import os
-import dotenv
 import logging
 
 # Ensure the log directory exists
@@ -17,16 +16,17 @@ logging.basicConfig(
 
 def login(handle_env_var, app_pass_env_var):
     try:
-        dotenv.load_dotenv()
         handle = os.getenv(handle_env_var)
         app_pass = os.getenv(app_pass_env_var)
+        host_url = os.getenv("BSKY_HOST_URL", "https://bsky.social")
+
+        client = Client(host_url)
 
         if not handle or not app_pass:
             logging.error("Handle or app password missing in environment variables.")
             raise ValueError("Handle or app password missing in environment variables")
 
         logging.debug("Attempting to log in with handle: %s", handle)
-        client = Client()
         client.login(handle, app_pass)  # Access credentials securely
 
         logging.info("Login successful for handle: %s", handle)
