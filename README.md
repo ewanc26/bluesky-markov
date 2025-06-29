@@ -36,6 +36,7 @@ To run this project, you will need the following:
   - `atproto`
 
 You can install the required libraries using:
+
 ```bash
 pip install python-dotenv markovchain atproto
 ```
@@ -43,12 +44,27 @@ pip install python-dotenv markovchain atproto
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/ewanc26/bluesky-markov.git
    cd bluesky-markov
    ```
 
-2. Create a `.env` file in the root directory of the project and add your environment variables:
+2. Create and activate a Python virtual environment:
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. Install the required libraries:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create a `.env` file in the root directory of the project and add your environment variables:
+
    ```plaintext
    SOURCE_HANDLE=your_source_handle
    DESTINATION_HANDLE=your_destination_handle
@@ -61,6 +77,7 @@ pip install python-dotenv markovchain atproto
 
 1. Navigate to the project directory.
 2. Run the main script:
+
    ```bash
    python src/main.py
    ```
@@ -80,7 +97,7 @@ All logs are stored in the `log` directory. The logs are written to `general.log
 
 The project has the following structure:
 
-```
+```plaintext
 project-root/
 │
 ├── log/
