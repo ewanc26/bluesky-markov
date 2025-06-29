@@ -71,6 +71,7 @@ pip install python-dotenv markovchain atproto
    CHAR_LIMIT=280
    SRC_APP_PASS=your_source_app_password
    DST_APP_PASS=your_destination_app_password
+   BSKY_HOST_URL=https://bsky.social # Optional: defaults to bsky.social
    ```
 
 ## Usage
