@@ -19,7 +19,15 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+# Set up console logging
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+logging.getLogger().addHandler(console_handler)
+
 logging.info("NEW EXECUTION OF APPLICATION\n\n\n")
+print("Bluesky Markov Bot started.")
 
 # Load environment variables
 load_dotenv()
@@ -36,6 +44,7 @@ logging.debug("Loaded environment variables: SOURCE_HANDLE=%s, DESTINATION_HANDL
 try:
     source_client = login("SOURCE_HANDLE", "SRC_APP_PASS")
     logging.info("Successfully logged in to source account.")
+    print("Successfully logged in to source account.")
     
     source_did_package = DID_resolve(source_handle)
     source_did = source_did_package['did']
@@ -43,6 +52,7 @@ try:
 
     destination_client = login("DESTINATION_HANDLE", "DST_APP_PASS")
     logging.info("Successfully logged in to destination account.")
+    print("Successfully logged in to destination account.")
 
 except Exception as e:
     logging.exception("An error occurred during setup: %s", e)
@@ -63,6 +73,7 @@ def generate_and_post_example():
         )
         post_link = response['uri']
         logging.info("Posted to destination Bluesky account successfully: %s", post_link)
+        print(f"Posted to destination Bluesky account successfully: {post_link}")
     except Exception as e:
         logging.error("Error posting to destination Bluesky account: %s", e)
 
@@ -79,9 +90,11 @@ try:
 
         markov = refresh_dataset(markov, source_posts)
         logging.info("Markov dataset refreshed.")
+        print("Markov dataset refreshed.")
 
         generate_and_post_example()
         sleep_until_next_refresh(next_refresh)
 
 except KeyboardInterrupt:
     logging.info("Exiting on user interrupt.")
+    print("Exiting on user interrupt.")
