@@ -29,17 +29,7 @@ This repository contains a set of scripts to create and post Markov chain-genera
 
 To run this project, you will need the following:
 
-- Python 3.x
-- Required libraries (install via `pip`):
-  - `dotenv`
-  - `markovchain`
-  - `atproto`
-
-You can install the required libraries using:
-
-```bash
-pip install python-dotenv markovchain atproto
-```
+- Rust 1.85+ (Cargo)
 
 ## Installation
 
@@ -50,20 +40,13 @@ pip install python-dotenv markovchain atproto
    cd bluesky-markov
    ```
 
-2. Create and activate a Python virtual environment:
+2. Build the project:
 
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   cargo build --release
    ```
 
-3. Install the required libraries:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Create a `.env` file in the root directory of the project and add your environment variables:
+3. Create a `.env` file in the root directory of the project and add your environment variables:
 
    ```plaintext
    SOURCE_HANDLE=your_source_handle
@@ -77,10 +60,10 @@ pip install python-dotenv markovchain atproto
 ## Usage
 
 1. Navigate to the project directory.
-2. Run the main script:
+2. Run the application:
 
    ```bash
-   python src/main.py
+   cargo run --release
    ```
 
 The application will log into the source and destination accounts, retrieve posts, generate new content based on the retrieved posts, and post the generated content to the destination account at random intervals.
@@ -105,13 +88,14 @@ project-root/
 │   └── general.log           # Log file for application events
 │
 ├── src/
-│   ├── clean.py              # Contains functions to clean retrieved content
-│   ├── markov_gen.py         # Handles Markov chain text generation
-│   ├── time_utils.py         # Utilities for time management and scheduling
-│   ├── bsky_api.py           # Functions for interacting with the Bluesky API
-│   └── main.py               # Main application logic
+│   ├── bsky.rs               # Bluesky API interaction (using bsky-sdk)
+│   ├── clean.rs              # Content cleaning logic
+│   ├── markov_gen.rs         # Markov chain generation
+│   ├── time.rs               # Time and scheduling utilities
+│   └── main.rs               # Main application entry point
 │
 ├── .env                       # Environment variables for authentication
+├── Cargo.toml                 # Rust dependencies and configuration
 └── README.md                  # Project documentation
 ```
 

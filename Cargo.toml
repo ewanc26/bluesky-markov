@@ -1,0 +1,22 @@
+[package]
+name = "bluesky-markov"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.37.0", features = ["full"] }
+reqwest = { version = "0.12.4", features = ["json"] }
+serde = { version = "1.0.201", features = ["derive"] }
+serde_json = "1.0.117"
+anyhow = "1.0.86"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing-appender = "0.2.3"
+regex = "1.10.4"
+dotenvy = "0.15.7"
+markov = "1.1.0"
+bsky-sdk = "0.1.24"
+atrium-api = "0.25.8"
+chrono = "0.4.38"
+rand = "0.8.5"
+html-escape = "0.2.13"

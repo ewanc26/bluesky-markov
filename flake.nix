@@ -1,5 +1,5 @@
 {
-  description = "bluesky-markov — Markov chain bot for Bluesky";
+  description = "bluesky-markov — Markov chain bot for Bluesky (Rust)";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
@@ -13,13 +13,15 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
-              python3
-              python3Packages.pip
-              python3Packages.virtualenv
+              rustc
+              cargo
+              rust-analyzer
+              pkg-config
+              openssl
             ];
 
             shellHook = ''
-              echo "bluesky-markov dev shell ready (Python 3)"
+              echo "bluesky-markov dev shell ready (Rust)"
             '';
           };
         }
