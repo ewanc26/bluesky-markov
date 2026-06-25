@@ -1,3 +1,5 @@
+# Pre-commit hook: format JS/TS/JSON/YAML/MD/CSS with Prettier.
+# Runs locally (no remote repo) — requires node_modules available at commit time.
 repos:
   - repo: local
     hooks:

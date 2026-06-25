@@ -1,3 +1,9 @@
+//! Entry point for the bluesky-markov bot.
+//!
+//! Orchestrates the main loop: fetch source posts, rebuild a Markov chain,
+//! generate a new post, publish it to the destination account, then sleep
+//! until the next refresh interval.
+
 mod bsky;
 mod clean;
 mod markov_gen;
@@ -13,18 +19,20 @@ use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 use atrium_api::app::bsky::feed::post::RecordData;
 use atrium_api::types::string::Datetime;
 
+// ─── Logging & Init ──────────────────────────────────────────────────
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Ensure the log directory exists
+    // Rolling daily logs under `log/` — survives container restarts
     let log_directory = "log";
     if !Path::new(log_directory).exists() {
         std::fs::create_dir_all(log_directory)?;
     }
 
-    // Set up tracing with file and console output
     let file_appender = tracing_appender::rolling::daily(log_directory, "general.log");
     let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
 
+    // Fall back to debug-level if RUST_LOG isn't set
     let filter = EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| EnvFilter::new("debug"));
 
@@ -37,7 +45,8 @@ async fn main() -> Result<()> {
     info!("NEW EXECUTION OF APPLICATION");
     println!("Bluesky Markov Bot started.");
 
-    // Load environment variables
+    // ─── Env Config ────────────────────────────────────────────────
+
     dotenv().ok();
 
     let source_handle = env::var("SOURCE_HANDLE").context("SOURCE_HANDLE not set")?;
@@ -52,7 +61,10 @@ async fn main() -> Result<()> {
         source_handle, destination_handle, char_limit
     );
 
-    // Login to source and destination accounts
+    // ─── Auth ──────────────────────────────────────────────────────
+    // Two separate agents: read-only on source, write-only on destination.
+    // App passwords keep the blast radius contained if one is leaked.
+
     let source_agent = bsky::login("SOURCE_HANDLE", "SRC_APP_PASS").await?;
     let source_did = bsky::resolve_did(&source_agent, &source_handle).await?;
 
@@ -60,6 +72,10 @@ async fn main() -> Result<()> {
 
     #[allow(unused_assignments)]
     let mut markov_chain_opt: Option<markov::Chain<String>> = None;
+
+    // ─── Main Loop ─────────────────────────────────────────────────
+    // Fetch source posts, rebuild the chain, generate and post, then
+    // sleep for a random interval (30 min–3 hours) to avoid bot patterns.
 
     loop {
         let current_time = Local::now();

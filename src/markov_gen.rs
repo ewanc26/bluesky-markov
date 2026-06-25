@@ -1,3 +1,8 @@
+//! Fetch source posts, build a Markov chain, and generate text.
+//!
+//! The pipeline: paginate all posts from the source DID → clean each one
+//! → feed into a `markov::Chain` → generate a string capped at `char_limit`.
+
 use bsky_sdk::BskyAgent;
 use crate::clean::clean_content;
 use atrium_api::types::string::Did;
@@ -5,6 +10,11 @@ use markov::Chain;
 use anyhow::{Result, anyhow};
 use tracing::{info, debug};
 
+/// Retrieve all posts from the source account, cleaned and ready for training.
+///
+/// Paginates through the AT Protocol `list_records` endpoint (100 records
+/// per page). Only `app.bsky.feed.post` records are fetched — other
+/// collection types are ignored.
 pub async fn retrieve_posts(agent: &BskyAgent, did: Did) -> Result<Vec<String>> {
     let mut post_list = Vec::new();
     let mut cursor = None;
@@ -31,7 +41,7 @@ pub async fn retrieve_posts(agent: &BskyAgent, did: Did) -> Result<Vec<String>> 
         }
 
         info!("Retrieved {} posts.", records_len);
-        
+
         cursor = data.cursor;
         if cursor.is_none() {
             break;
@@ -42,6 +52,11 @@ pub async fn retrieve_posts(agent: &BskyAgent, did: Did) -> Result<Vec<String>> 
     Ok(post_list)
 }
 
+/// Feed cleaned posts into a fresh Markov chain, replacing the old dataset.
+///
+/// Creates a new `Chain` each call rather than incrementally updating —
+/// the corpus is small enough that rebuilding is simpler than tracking
+/// individual record additions and deletions.
 pub fn refresh_dataset(source_posts: Vec<String>) -> Chain<String> {
     let mut chain = Chain::new();
     for post in source_posts {
@@ -51,12 +66,15 @@ pub fn refresh_dataset(source_posts: Vec<String>) -> Chain<String> {
     chain
 }
 
+/// Generate a single post from the chain, truncated to `char_limit`.
+///
+/// Returns an empty string if the chain has no data yet (first-run edge case).
 pub fn generate_text(chain: &Chain<String>, char_limit: usize) -> String {
     let generated = chain.generate_str();
     if generated.is_empty() {
         return String::new();
     }
-    
+
     let mut result = generated;
     if result.len() > char_limit {
         result.truncate(char_limit);
