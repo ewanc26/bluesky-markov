@@ -16,4 +16,4 @@ A Markov chain bot for Bluesky.
 
 ## Recent direction
 
-Recent commits: Sync AGENTS.md from zincfox; Sync AGENTS.md from zincfox; Sync CONTRIBUTING.md from zincfox; Sync CONTRIBUTING.md from zincfox; Remove old feature_request.md template
+Recent commits: Remove old feature_request.md template

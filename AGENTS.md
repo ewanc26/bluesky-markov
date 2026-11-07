@@ -20,4 +20,4 @@ A Markov chain bot for Bluesky.
 
 ## Recent history
 
-Sync AGENTS.md from zincfox; Sync AGENTS.md from zincfox; Sync CONTRIBUTING.md from zincfox; Sync CONTRIBUTING.md from zincfox; Remove old feature_request.md template
+Remove old feature_request.md template
