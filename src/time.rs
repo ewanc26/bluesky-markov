@@ -5,7 +5,7 @@
 //! clockwork.
 
 use chrono::{DateTime, Local, Duration};
-use rand::Rng;
+use rand::RngExt;
 use tracing::{debug, info, warn};
 use tokio::time::sleep;
 
@@ -13,8 +13,8 @@ use tokio::time::sleep;
 ///
 /// Jitter avoids predictable posting patterns that might look like spam.
 pub fn calculate_refresh_interval() -> i64 {
-    let mut rng = rand::thread_rng();
-    let refresh_interval = rng.gen_range(1800..10800);
+    let mut rng = rand::rng();
+    let refresh_interval = rng.random_range(1800..10800);
     debug!("Calculated refresh interval: {} seconds", refresh_interval);
     refresh_interval
 }
